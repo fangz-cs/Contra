@@ -1,0 +1,9 @@
+models:
+  - name: api-model
+    model_id: your-model-id
+    base_url_env: CONTRA_BASE_URL
+    api_key_env: CONTRA_API_KEY
+    max_tokens: 8192
+    temperature: 0.0
+    workers: 4
+    reasoning_effort: low

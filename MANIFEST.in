@@ -1,0 +1,12 @@
+include LICENSE README.md .gitignore .env.example
+include .claude-plugin/marketplace.json
+recursive-include contra *.py
+recursive-include code *.py *.md
+recursive-include plugin *.py *.md *.json LICENSE
+recursive-include configs *.yaml
+recursive-include tests *.py
+include scripts/check_release.py
+global-exclude *.py[cod] *.jsonl *.csv *.tsv *.parquet *.zip *.pdf *.tex *.bib
+prune .git
+prune .venv
+prune .pytest_cache

@@ -1,0 +1,13 @@
+{
+  "name": "contra",
+  "version": "0.1.0",
+  "description": "After a code change, show the decisions the request never stated -- what was done beyond it, what was left undone, and which reading was picked where it was open -- then confirm the open ones with a test that fails under the rival reading.",
+  "license": "Apache-2.0",
+  "keywords": [
+    "code-review",
+    "clarification",
+    "underspecification",
+    "disclosure",
+    "testing"
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "name": "contra-paper",
+  "owner": {
+    "name": "CONTRA maintainers"
+  },
+  "metadata": {
+    "description": "CONTRA developer plugin for unstated decisions and discriminating tests."
+  },
+  "plugins": [
+    {
+      "name": "contra",
+      "source": "./plugin",
+      "description": "Surface unstated code-change decisions and check them with discriminating tests."
+    }
+  ]
+}

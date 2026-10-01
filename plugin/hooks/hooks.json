@@ -1,0 +1,37 @@
+{
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/record_baseline.py\"",
+            "timeout": 60,
+            "statusMessage": "CONTRA: recording this turn's baseline"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/verify_disclosures.py\"",
+            "timeout": 300,
+            "statusMessage": "CONTRA: finding the decisions made for you"
+          },
+          {
+            "type": "command",
+            "command": "python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/verify_disclosures.py\" verify",
+            "timeout": 900,
+            "asyncRewake": true,
+            "rewakeMessage": "CONTRA background verification finished: ",
+            "rewakeSummary": "CONTRA discriminating tests ready",
+            "statusMessage": "CONTRA: verifying in the background"
+          }
+        ]
+      }
+    ]
+  }
+}

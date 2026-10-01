@@ -1,0 +1,47 @@
+[build-system]
+requires = ["setuptools>=77", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "contra-clarification"
+version = "0.1.0"
+description = "Behavior-changing questions for selective clarification in code generation"
+requires-python = ">=3.10"
+license = "Apache-2.0"
+license-files = ["LICENSE"]
+readme = "README.md"
+dependencies = [
+    "openai>=1.40,<3",
+    "PyYAML>=6,<7",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8,<9", "build>=1,<2"]
+harness = [
+    "openhands-sdk==1.44.1; python_version >= '3.12'",
+    "openhands-tools==1.44.1; python_version >= '3.12'",
+    "litellm==1.99.0; python_version >= '3.12'",
+]
+
+[tool.setuptools]
+packages = ["contra", "forkcast"]
+
+[tool.setuptools.package-dir]
+contra = "contra"
+forkcast = "code/pipeline/forkcast"
+
+[tool.pytest.ini_options]
+testpaths = [
+    "tests",
+    "code/pipeline/tests",
+    "code/selector",
+    "code/evaluation/clarification",
+    "plugin/tests",
+]
+pythonpath = [
+    ".",
+    "code/pipeline",
+    "code/pipeline/scripts",
+    "code/evaluation/clarification",
+]
+addopts = "--import-mode=importlib"
