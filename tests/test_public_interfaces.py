@@ -144,6 +144,7 @@ def test_selector_dry_run_validates_a_synthetic_frozen_plan_without_api(tmp_path
 
 def test_plugin_marketplace_and_hook_settings_are_portable() -> None:
     marketplace = json.loads((ROOT / ".claude-plugin" / "marketplace.json").read_text())
+    assert marketplace["name"] == "contra"
     plugin = marketplace["plugins"][0]
     assert plugin["source"] == "./plugin"
     assert (ROOT / plugin["source"] / ".claude-plugin" / "plugin.json").is_file()

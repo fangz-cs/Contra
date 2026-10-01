@@ -17,7 +17,7 @@ The root marketplace descriptor also supports local installation:
 
 ```bash
 claude plugin marketplace add /path/to/contra-checkout
-claude plugin install contra@contra-paper
+claude plugin install contra@contra
 ```
 
 Requirements:
