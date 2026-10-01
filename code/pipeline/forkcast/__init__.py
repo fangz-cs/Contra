@@ -1,1 +1,1 @@
-"""Frozen helpers for the CCB V3 multibackbone pipeline."""
+"""Shared helpers for the original frozen question-plan implementation."""

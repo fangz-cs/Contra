@@ -24,7 +24,7 @@ from typing import Any, Iterable, Mapping
 REPO = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO))
 
-from forkcast.ccb_v3_harness import (
+from forkcast.question_plan import (
     PLAN_SCHEMA,
     HarnessError,
     index_tasks,

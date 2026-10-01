@@ -10,6 +10,7 @@ test that passes on the implemented reading and fails on a runnable rival.
 Run from the repository root:
 
 ```bash
+python -m pip install -e ".[plugin]"
 claude --plugin-dir ./plugin
 ```
 
@@ -26,6 +27,9 @@ Requirements:
 - `git` for deduplicated prompt-time snapshots.
 - `pytest` for executable verification.
 - Linux and `bubblewrap` for isolated test execution.
+
+The `pytest` dependency runs plugin-generated discriminating tests. No
+development test suite is included in this release.
 
 Without `git`, the baseline uses capped inline source. Without a working
 sandbox, verification is reported as unavailable by default. Source reporting
@@ -46,8 +50,7 @@ New files, staged edits, and changes made after the prompt are included.
 Earlier uncommitted changes are not treated as this turn's work. A missing
 baseline does not fall back to the full working tree.
 
-The asynchronous path is part of the supported plugin hook protocol. The
-synchronous configuration below is intended for non-interactive evaluation.
+The asynchronous path is part of the supported plugin hook protocol.
 
 ## Configuration
 
@@ -89,18 +92,6 @@ text, so keep it private and outside the publication repository.
 `CONTRA_INSIDE` marks plugin-started subprocesses to prevent recursive hooks.
 Do not set it for normal use.
 
-For non-interactive evaluation, set the plugin root explicitly and use the
-portable settings file:
-
-```bash
-export CLAUDE_PLUGIN_ROOT="$(pwd)/plugin"
-claude --settings plugin/hook_settings_eval.json
-```
-
-This configuration sets `CONTRA_SYNC_VERIFY=1` and runs verification inside the
-synchronous hook. No personal absolute path is stored in the file.
-Use either this settings file or the normal plugin hooks, not both.
-
 ## Evidence and execution
 
 Only a passing implemented-reading test and a failing runnable rival confirm
@@ -129,9 +120,8 @@ inputs to the configured provider is authorized.
 | [scripts/rank.py](scripts/rank.py) | Rank and render decisions |
 | [scripts/ledger.py](scripts/ledger.py) | Cumulative view across turns |
 | [skills/clarify-before-coding/SKILL.md](skills/clarify-before-coding/SKILL.md) | Decision-reporting skill |
-| [tests/](tests/) | Offline regression tests |
 
-Legacy prototypes and recorded evaluation outputs are not included.
+Only the active plugin implementation is included.
 
 ## License
 

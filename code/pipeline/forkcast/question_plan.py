@@ -1,9 +1,4 @@
-"""Clarification-only adapter for the ClarifyCodeBench-v3 harness.
-
-RITE supplies a frozen, Gold-blind ordering of clarification questions. This
-module asks those questions through ClarifyCodeBench's official matcher and
-records a logical terminal turn, but never invokes a code-generation model.
-"""
+"""Frozen question-plan schemas, bindings, and validation helpers."""
 from __future__ import annotations
 
 import hashlib
@@ -13,7 +8,6 @@ from typing import Any, Iterable, Mapping
 
 
 PLAN_SCHEMA = "ccb-v3-pregenerated-question-plan-v1"
-RUN_SCHEMA = "ccb-v3-clarification-only-run-v1"
 FORBIDDEN_PLAN_KEYS = {
     "answer",
     "answers",
@@ -150,102 +144,3 @@ def load_plan(
     if plan.get("question_count") != total_questions:
         raise HarnessError(f"{path}: question-count mismatch")
     return plan
-
-
-def run_question_task(
-    *,
-    interact: Any,
-    client: Any,
-    task: Mapping[str, Any],
-    plan_entry: Mapping[str, Any],
-    judge_model: str,
-    max_turns: int = 6,
-    consistency: int = 3,
-    max_retries: int = 10,
-) -> dict[str, Any]:
-    """Replay one frozen question queue through the official matcher."""
-    if max_turns < 1:
-        raise HarnessError("max_turns must be positive")
-    qa_pairs = list(task.get("qa_pairs") or [])
-    statement = str(task["modified_content"])
-    queue = list(plan_entry["questions"])
-    question_budget = max_turns - 1
-    scheduled = queue[:question_budget]
-
-    messages: list[dict[str, Any]] = [
-        {"role": "system", "content": interact.SYSTEM_PROMPT},
-        {"role": "user", "content": statement},
-    ]
-    response_contents: list[str] = []
-    hit_questions: set[str] = set()
-    hit_dict: dict[str, int] = {}
-    asked_questions: list[dict[str, Any]] = []
-    failure: str | None = None
-
-    for turn, question in enumerate(scheduled):
-        text = str(question["text"]).strip()
-        content = f"[QUESTION]\n{text}\n[/QUESTION]"
-        messages.append({"role": "assistant", "content": content})
-        response_contents.append(content)
-        hit, reply, matched = interact._judge_answer(
-            client,
-            text,
-            qa_pairs,
-            hit_questions,
-            judge_model,
-            consistency,
-            max_retries,
-        )
-        if hit == -1:
-            failure = "official clarification matcher failed"
-            break
-        hit_dict[str(turn)] = hit
-        if matched is not None:
-            hit_questions.add(matched)
-        messages.append(
-            {"role": "user", "content": reply + interact.FOLLOWUP}
-        )
-        asked_questions.append(
-            {
-                "turn": turn,
-                "candidate_id": question["candidate_id"],
-                "queue_position": question["queue_position"],
-                "question": text,
-            }
-        )
-
-    finished = failure is None
-    logical_terminal = finished
-    terminal_reason = (
-        "question_budget_exhausted"
-        if len(queue) > question_budget
-        else "question_queue_exhausted"
-    )
-    question_turns = len(response_contents)
-    return {
-        "schema_version": RUN_SCHEMA,
-        "id": task.get("question_id"),
-        "task_id": task.get("task_id"),
-        "key_question_num": len(qa_pairs),
-        "prompt": statement,
-        "messages": messages,
-        "response_contents": response_contents,
-        "hit_dict": hit_dict,
-        "hit_questions": sorted(hit_questions),
-        "question_turns": question_turns,
-        "turns": question_turns + (1 if logical_terminal else 0),
-        "final_code": "",
-        "finished": finished,
-        "failure": failure,
-        "evaluation_scope": "clarification_only",
-        "code_generation_evaluated": False,
-        "logical_terminal_turn": logical_terminal,
-        "terminal_reason": terminal_reason if logical_terminal else None,
-        "n_questions_available": len(queue),
-        "n_questions_scheduled": len(scheduled),
-        "n_questions_asked": len(asked_questions),
-        "n_questions_omitted_by_turn_budget": max(
-            0, len(queue) - question_budget
-        ),
-        "asked_questions": asked_questions,
-    }
