@@ -1205,7 +1205,7 @@ def manifest(
             "agent1_chunk_count": len(agent1_chunks),
             "cross_task_batching": False,
         },
-        "demonstration_source": "synthetic; no CCB examples",
+        "demonstration_source": "synthetic; no ClarifyCodeBench examples",
         "prompt_material": prompt_material,
         "prompt_sha256": stable_json_sha256(prompt_material),
         "code_sha256": sha256_file(script_path),

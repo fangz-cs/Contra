@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build RITE's frozen V3 question queue from existing method authorities.
+"""Build CONTRA's frozen ClarifyCodeBench queue from existing method authorities.
 
 The main route is fixed to:
 
@@ -24,7 +24,7 @@ from typing import Any, Iterable, Mapping
 REPO = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO))
 
-from forkcast.question_plan import (
+from contra.question_plan import (
     PLAN_SCHEMA,
     HarnessError,
     index_tasks,
@@ -224,7 +224,7 @@ def build_plan(
             "agent1_candidates": len(agent1_gate),
             "v2_gate_candidates": len(v2_gate),
             "route_candidates_all_cohorts": len(route),
-            "route_control_candidates_excluded_from_v3_plan": len(controls),
+            "route_control_candidates_excluded_from_plan": len(controls),
             "route_variant_candidates": len(route - controls),
             "exact_duplicate_candidate_questions_collapsed": (
                 exact_duplicate_extras
@@ -262,13 +262,13 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--data",
         type=Path,
-        default=Path("data_v3/ClarifyCodeBench-v3-interactive.jsonl"),
+        default=Path("inputs/clarifycodebench.jsonl"),
     )
     parser.add_argument("--candidate-input", type=Path, required=True)
     parser.add_argument("--candidate-metadata", type=Path, required=True)
     parser.add_argument("--v2-singleton", type=Path, required=True)
     parser.add_argument("--self-bv", type=Path, required=True)
-    parser.add_argument("--method", default="RITE")
+    parser.add_argument("--method", default="CONTRA")
     parser.add_argument("--out", type=Path, required=True)
     return parser
 

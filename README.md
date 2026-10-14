@@ -19,8 +19,9 @@ also excluded.
 
 The supplied source snapshot did not include the original full offline
 discovery or multi-program behavioral-verification drivers. They are not part
-of this release, and no replacement implementations are included. Internal
-`RITE` and `ForkCast` names remain where they preserve original wire formats.
+of this release, and no replacement implementations are included. Method
+identifiers use `CONTRA` / `contra`; benchmark identifiers use
+`ClarifyCodeBench` / `clarifycodebench`.
 
 ## Installation
 
@@ -31,6 +32,8 @@ python3 -m venv .venv
 source .venv/bin/activate
 python -m pip install -e .
 ```
+
+The installed Python package is `contra`.
 
 For the plugin, install its executable-verification dependency:
 
@@ -59,7 +62,7 @@ The original scripts separate two judgments:
   checks whether the requirement resolves the choice. A resolved judgment must
   cite verbatim evidence; an unresolved judgment must provide no evidence span.
 
-[build_rite_v3_question_plan.py](code/pipeline/scripts/build_rite_v3_question_plan.py)
+[build_contra_question_plan.py](code/pipeline/scripts/build_contra_question_plan.py)
 consumes existing qualification and behavioral-verification outputs. It retains
 relevant, unresolved candidates with at least one stable behavioral difference,
 preserves their discovery order, and binds the frozen queue to its inputs.
@@ -102,6 +105,19 @@ Live qualification requires `--confirm-live`. Use each script's `--help` for
 its input contract. Agent 2 consumes Agent 1's results, manifest, and completion
 marker. Its expected selected count must be supplied for the input you use.
 
+Build a frozen plan from the supplied ClarifyCodeBench tasks, discovery
+candidates, Agent 2 results, and behavioral-verification results:
+
+```bash
+python code/pipeline/scripts/build_contra_question_plan.py \
+  --data inputs/clarifycodebench.jsonl \
+  --candidate-input inputs/candidates.jsonl \
+  --candidate-metadata inputs/candidate-metadata.jsonl \
+  --v2-singleton outputs/agent2/results.jsonl \
+  --self-bv inputs/behavioral-verification.jsonl \
+  --out inputs/question-plan.json
+```
+
 The original selector uses the ClarifyCodeBench interaction runtime. Supply an
 authorized external checkout containing the `clarifycodebench` package, including
 its `prompts`, `interact`, `extract`, and `llm` modules. That dependency is not
@@ -111,9 +127,9 @@ Validate a supplied dataset and frozen question plan without an API call:
 
 ```bash
 python code/selector/run_interactive_question_selector.py \
-  --data inputs/tasks.jsonl \
+  --data inputs/clarifycodebench.jsonl \
   --plan inputs/question-plan.json \
-  --release /path/to/clarifycodebench_release \
+  --release /path/to/clarifycodebench-checkout \
   --model your-model-id \
   --out outputs/selector/results.jsonl \
   --dry-run
@@ -123,6 +139,13 @@ Replace `--dry-run` with `--confirm` to execute. Use
 `--model-temperature none` if the provider rejects a temperature parameter.
 The selector resumes compatible completed tasks by default and rejects
 changed manifests.
+
+Frozen plans use `clarifycodebench-pregenerated-question-plan-v1`; selector
+artifacts use `contra-interactive-question-selector-*` schemas. Schema version
+suffixes describe artifact formats, not benchmark editions. When updating from
+an earlier release, reinstall the package, regenerate plans, and use a fresh
+selector output directory. Schema, hash-binding, and resume checks deliberately
+reject incompatible artifacts.
 
 ## Developer plugin
 

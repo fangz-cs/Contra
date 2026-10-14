@@ -19,7 +19,7 @@ dependencies = [
 plugin = ["pytest>=8,<9"]
 
 [tool.setuptools]
-packages = ["forkcast"]
+packages = ["contra"]
 
 [tool.setuptools.package-dir]
-forkcast = "code/pipeline/forkcast"
+contra = "code/pipeline/contra"

@@ -22,12 +22,12 @@ from pathlib import Path
 from typing import Any, Callable, Mapping, Sequence
 
 
-METHOD = "RITE+Dialogue-Conditioned-Question-Selector"
-SCHEMA_MANIFEST = "rite-interactive-question-selector-manifest-v3"
-SCHEMA_RESULT = "rite-interactive-question-selector-result-v3"
-SCHEMA_EVENT = "rite-interactive-question-selector-event-v2"
-SCHEMA_COMPLETE = "rite-interactive-question-selector-complete-v3"
-PLAN_SCHEMA = "ccb-v3-pregenerated-question-plan-v1"
+METHOD = "CONTRA+Dialogue-Conditioned-Question-Selector"
+SCHEMA_MANIFEST = "contra-interactive-question-selector-manifest-v3"
+SCHEMA_RESULT = "contra-interactive-question-selector-result-v3"
+SCHEMA_EVENT = "contra-interactive-question-selector-event-v2"
+SCHEMA_COMPLETE = "contra-interactive-question-selector-complete-v3"
+PLAN_SCHEMA = "clarifycodebench-pregenerated-question-plan-v1"
 SELECT_TOOL_NAME = "select_question"
 FINISH_TOOL_NAME = "finish_clarification"
 HARNESS_QUESTION_ROUND_LIMIT = 5
@@ -734,7 +734,7 @@ def exact_code_block(
     *,
     extract_code: Callable[[str], str],
 ) -> str | None:
-    """Accept one nonempty CCB code block with no surrounding prose."""
+    """Accept one nonempty ClarifyCodeBench code block with no surrounding prose."""
     stripped = content.strip()
     opening = "[CODE]"
     closing = "[/CODE]"
@@ -934,7 +934,7 @@ def run_task(
                     }
                 )
         if hit == -1:
-            failure_reason = "ccb_question_judge_failed"
+            failure_reason = "clarifycodebench_question_judge_failed"
             break
         hit_dict[str(turn)] = hit
         if matched is not None:
@@ -1482,7 +1482,7 @@ def build_manifest(
                 "path": str(args.transport.resolve()),
                 "sha256": sha256_file(args.transport),
             },
-            "ccb": {
+            "clarifycodebench": {
                 "release": str(args.release.resolve()),
                 "system_prompt_sha256": hashlib.sha256(
                     prompts.SYSTEM_PROMPT.encode("utf-8")
@@ -1588,7 +1588,7 @@ def parse_args() -> argparse.Namespace:
         None if args.model_temperature == "none" else 0.0
     )
     if args.consistency != 3:
-        parser.error("the frozen CCB judge requires three votes")
+        parser.error("the frozen ClarifyCodeBench judge requires three votes")
     if (
         args.selector_max_tokens < 1
         or args.code_max_tokens < 1

@@ -7,7 +7,7 @@ from pathlib import Path
 from typing import Any, Iterable, Mapping
 
 
-PLAN_SCHEMA = "ccb-v3-pregenerated-question-plan-v1"
+PLAN_SCHEMA = "clarifycodebench-pregenerated-question-plan-v1"
 FORBIDDEN_PLAN_KEYS = {
     "answer",
     "answers",
